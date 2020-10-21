@@ -1,6 +1,7 @@
 import tensorflow as tf
 from config import NUM_CLASSES
 from models.residual_block import make_basic_block_layer, make_bottleneck_layer
+from vpnn import vpnn
 
 
 class ResNetTypeI(tf.keras.Model):
@@ -29,7 +30,9 @@ class ResNetTypeI(tf.keras.Model):
                                              stride=2)
 
         self.avgpool = tf.keras.layers.GlobalAveragePooling2D()
-        self.fc = tf.keras.layers.Dense(units=NUM_CLASSES, activation=tf.keras.activations.softmax)
+        self.vpnn = vpnn(n_layers=4, n_rotations=10)
+        self.fc = tf.keras.layers.Dense(
+            units=NUM_CLASSES, activation=tf.keras.activations.softmax)
 
     def call(self, inputs, training=None, mask=None):
         x = self.conv1(inputs)
@@ -41,6 +44,7 @@ class ResNetTypeI(tf.keras.Model):
         x = self.layer3(x, training=training)
         x = self.layer4(x, training=training)
         x = self.avgpool(x)
+        x = self.vpnn(x)
         output = self.fc(x)
 
         return output
@@ -71,7 +75,8 @@ class ResNetTypeII(tf.keras.Model):
                                             stride=2)
 
         self.avgpool = tf.keras.layers.GlobalAveragePooling2D()
-        self.fc = tf.keras.layers.Dense(units=NUM_CLASSES, activation=tf.keras.activations.softmax)
+        self.fc = tf.keras.layers.Dense(
+            units=NUM_CLASSES, activation=tf.keras.activations.softmax)
 
     def call(self, inputs, training=None, mask=None):
         x = self.conv1(inputs)
