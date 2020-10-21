@@ -30,7 +30,7 @@ model.compile(
 model.fit(
     x=X_train,
     y=y_train,
-    epochs=30,
+    epochs=100,
     validation_data=(X_test, y_test)
 )
 print(model)

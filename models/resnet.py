@@ -75,6 +75,7 @@ class ResNetTypeII(tf.keras.Model):
                                             stride=2)
 
         self.avgpool = tf.keras.layers.GlobalAveragePooling2D()
+        self.vpnn = vpnn(n_layers=4, n_rotations=10)
         self.fc = tf.keras.layers.Dense(
             units=NUM_CLASSES, activation=tf.keras.activations.softmax)
 
@@ -88,6 +89,7 @@ class ResNetTypeII(tf.keras.Model):
         x = self.layer3(x, training=training)
         x = self.layer4(x, training=training)
         x = self.avgpool(x)
+        x = self.vpnn(x)
         output = self.fc(x)
 
         return output
